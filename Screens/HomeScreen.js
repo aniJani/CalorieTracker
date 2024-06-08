@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { Themes } from '../App/Theme';
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,8 +66,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    ...Themes.heading,
     marginBottom: 20,  // Added margin for better spacing
   },
   input: {
