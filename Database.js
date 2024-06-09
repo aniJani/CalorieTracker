@@ -37,6 +37,44 @@ const initDB = () => {
             () => console.log('Today table created successfully'),
             (_, error) => console.log('Error creating Today table', error)
         );
+
+        tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS CalorieGoal (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                goal INTEGER
+            );`,
+            [],
+            () => console.log('CalorieGoal table created successfully'),
+            (_, error) => console.log('Error creating CalorieGoal table', error)
+        );
+    });
+};
+
+const fetchCalorieGoal = (callback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'SELECT goal FROM CalorieGoal',
+            [],
+            (_, { rows }) => {
+                if (rows.length > 0) {
+                    callback(rows.item(0).goal);
+                } else {
+                    callback(null);
+                }
+            },
+            (_, error) => console.log('Error fetching calorie goal', error)
+        );
+    });
+};
+
+const setCalorieGoal = (goal, callback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'INSERT OR REPLACE INTO CalorieGoal (id, goal) VALUES (1, ?)',
+            [goal],
+            callback,
+            (_, error) => console.log('Error setting calorie goal', error)
+        );
     });
 };
 
@@ -79,6 +117,24 @@ const addFoodToLog = (foodDescription, calories, servings, callback) => {
     });
 };
 
+const fetchTodayLogItems = (callback) => {
+    const today = new Date().toISOString().split('T')[0];
+    db.transaction(tx => {
+        tx.executeSql(
+            'SELECT * FROM logs WHERE dateOfEntry = ?',
+            [today],
+            (_, { rows }) => {
+                let logItems = [];
+                for (let i = 0; i < rows.length; i++) {
+                    logItems.push(rows.item(i));
+                }
+                callback(logItems);
+            },
+            (_, error) => console.log('Error fetching today\'s log items', error)
+        );
+    });
+};
+
 const resetDB = () => {
     db.transaction(tx => {
         tx.executeSql('DROP TABLE IF EXISTS logs;', [],
@@ -96,5 +152,5 @@ const resetDB = () => {
     }, null, initDB); // Reinitialize the database after dropping tables
 };
 
-export { addFoodToLog, db, fetchTodayCalories, initDB, resetDB };
+export { addFoodToLog, db, fetchCalorieGoal, fetchTodayCalories, fetchTodayLogItems, initDB, resetDB, setCalorieGoal };
 

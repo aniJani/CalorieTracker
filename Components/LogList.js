@@ -1,26 +1,27 @@
-import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text,  View } from 'react-native';
-import { Themes } from '../App/Theme';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { fetchTodayLogItems } from '../Database';
 
 export default function LogList() {
-const [data, setData] = useState([
-    { id: '1', title: 'Log Item 1' },
-    { id: '2', title: 'Log Item 2' },
-    { id: '3', title: 'Log Item 3' },
-    ]);
+  const [data, setData] = useState([]);
 
-    const renderItem = ({ item }) => (
+  useEffect(() => {
+    fetchTodayLogItems(setData);
+  }, []);
+
+  const renderItem = ({ item }) => (
     <View style={styles.item}>
-        <Text style={styles.itemText}>{item.title}</Text>
+      <Text style={styles.itemText}>{item.foodName}</Text>
+      <Text style={styles.itemText}>Calories: {item.calories}</Text>
     </View>
-    );
+  );
 
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         style={styles.list}
       />
     </View>
@@ -42,5 +43,8 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 16,
+  },
+  list: {
+    width: '100%',
   },
 });
