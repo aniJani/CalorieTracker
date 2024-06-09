@@ -18,32 +18,8 @@ export default function HomeScreen({ navigation }) {
     setError(null);
     setIsLoading(false);
     navigation.navigate('SearchResults', { searchQuery: searchQuery })
-    // try {
-    //   const apiUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&pageSize=1&api_key=ChBEanL4ik3vuOZlPG3hdsgIqImCBwOQ9pELsrV5`;
-    //   const response = await fetch(apiUrl);
-    //   if (!response.ok) throw new Error('Something went wrong!');
-    //   const data = await response.json();
-
-    //   // Extract calorie information from the first result
-    //   const foodItem = data.foods[0];
-    //   const calories = foodItem.foodNutrients.find(nutrient => nutrient.nutrientName === 'Energy')?.value || 'N/A';
-
-    //   setResults([{ ...foodItem, calories }]);  // Update the state with the search results
-
-    // } catch (error) {
-    //   setError(error.message);
-    //   Alert.alert('Error', error.message);
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    
   };
-
-  // const renderItem = ({ item }) => (
-  //   <View style={styles.item}>
-  //     <Text style={styles.itemText}>{item.description}</Text>
-  //     <Text style={styles.itemText}>Calories: {item.calories}</Text>
-  //   </View>
-
 
   return (
     <View style={styles.container}>

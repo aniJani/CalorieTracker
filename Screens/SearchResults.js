@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Themes } from '../App/Theme';
 
 export default function SearchResults({ route, navigation }) {
     const { searchQuery } = route.params;
@@ -105,6 +106,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ccc',
     },
     itemText: {
-        fontSize: 16,
+        ...Themes.regular,
     },
 });

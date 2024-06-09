@@ -11,9 +11,9 @@ export const Themes = {
 
     // Text Styles
     heading :{
-        fontFamily: 'bold',
-        fontFamily: 'bold',
-        fontSize: 32,
+        fontFamily: 'regular',
+        
+        fontSize: 35,
     },
 
     subHeading: {
@@ -50,11 +50,12 @@ export const Themes = {
   // Load custom fonts and then use them
   export const loadFonts = async () => {
     await Font.loadAsync({
-      'regular': require('../assets/fonts/PixelifySans-Regular.ttf'),
-      'bold': require('../assets/fonts/PixelifySans-Bold.ttf'),
-      'medium': require('../assets/fonts/PixelifySans-Medium.ttf'),
-      'semibold': require('../assets/fonts/PixelifySans-SemiBold.ttf'),
-      'variable': require('../assets/fonts/PixelifySans-VariableFont_wght.ttf'),
+      'regular': require('../assets/fonts/WestEnglandRegular-24Y3.ttf'),
+      // 'regular': require('../assets/fonts/PixelifySans-Regular.ttf'),
+      // 'bold': require('../assets/fonts/PixelifySans-Bold.ttf'),
+      // 'medium': require('../assets/fonts/PixelifySans-Medium.ttf'),
+      // 'semibold': require('../assets/fonts/PixelifySans-SemiBold.ttf'),
+      // 'variable': require('../assets/fonts/PixelifySans-VariableFont_wght.ttf'),
     });
   };
 
