@@ -117,7 +117,7 @@ export default function SearchResults({ route, navigation }) {
                         <Text>{servings}</Text>
                         <Button title="+" onPress={() => setServings(servings + 1)} />
                     </View>
-                    <Button title="Add to Log" onPress={addFoodToLog} />
+                    <Button title="Add" onPress={addFoodToLog} />
                 </View>
             )}
             <View style={styles.todayCalories}>

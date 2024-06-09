@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Themes } from '../App/Theme';
 import Statistics from '../Components/Statistics';
-import LogList from '../Components/LogList';
+import LogList from '../Components/TodayList';
 
 export default function HomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
