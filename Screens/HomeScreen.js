@@ -3,6 +3,7 @@ import { ActivityIndicator, Alert, Button, FlatList, Modal, StyleSheet, Text, Te
 import { Themes } from '../App/Theme';
 import LogList from '../Components/LogList';
 import Statistics from '../Components/Statistics';
+import LogList from '../Components/TodayList';
 import { fetchCalorieGoal, setCalorieGoal } from '../Database';
 
 export default function HomeScreen({ navigation }) {
