@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Themes } from '../App/Theme';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,22 +16,34 @@ export default function HomeScreen() {
     if (!searchQuery.trim()) return;  // Avoid empty queries
     setIsLoading(true);
     setError(null);
-    try {
-      // Placeholder for API request - replace with your actual API call
-      const apiUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&api_key=ChBEanL4ik3vuOZlPG3hdsgIqImCBwOQ9pELsrV5`;
-      const response = await fetch(apiUrl);
-      if (!response.ok) throw new Error('Something went wrong!');
-      const data = await response.json();
-      // Handle the search results as needed
-      
-      Alert.alert('Search Results', JSON.stringify(data)); // Example of handling results
-    } catch (error) {
-      setError(error.message);
-      Alert.alert('Error', error.message);
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
+    navigation.navigate('SearchResults', { searchQuery: searchQuery })
+    // try {
+    //   const apiUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&pageSize=1&api_key=ChBEanL4ik3vuOZlPG3hdsgIqImCBwOQ9pELsrV5`;
+    //   const response = await fetch(apiUrl);
+    //   if (!response.ok) throw new Error('Something went wrong!');
+    //   const data = await response.json();
+
+    //   // Extract calorie information from the first result
+    //   const foodItem = data.foods[0];
+    //   const calories = foodItem.foodNutrients.find(nutrient => nutrient.nutrientName === 'Energy')?.value || 'N/A';
+
+    //   setResults([{ ...foodItem, calories }]);  // Update the state with the search results
+
+    // } catch (error) {
+    //   setError(error.message);
+    //   Alert.alert('Error', error.message);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
+
+  // const renderItem = ({ item }) => (
+  //   <View style={styles.item}>
+  //     <Text style={styles.itemText}>{item.description}</Text>
+  //     <Text style={styles.itemText}>Calories: {item.calories}</Text>
+  //   </View>
+
 
   return (
     <View style={styles.container}>
@@ -42,8 +54,8 @@ export default function HomeScreen() {
         value={searchQuery}
         placeholder="Search here..."
         keyboardType="default"
-        returnKeyType="search" // Changes the return key to say "Search"
-        onSubmitEditing={executeSearch} // Triggers the search when "Done" is pressed
+        returnKeyType="search"
+        onSubmitEditing={executeSearch}
       />
       {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -67,11 +79,11 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Themes.heading,
-    marginBottom: 20,  // Added margin for better spacing
+    marginBottom: 20,
   },
   input: {
     height: 40,
-    width: '80%',  // Specifies the width of the input field
+    width: '80%',
     margin: 12,
     borderWidth: 1,
     padding: 10,
