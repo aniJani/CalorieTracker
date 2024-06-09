@@ -18,12 +18,12 @@ export default function HomeScreen() {
     setError(null);
     try {
       // Placeholder for API request - replace with your actual API call
-
       const apiUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&api_key=ChBEanL4ik3vuOZlPG3hdsgIqImCBwOQ9pELsrV5`;
       const response = await fetch(apiUrl);
       if (!response.ok) throw new Error('Something went wrong!');
       const data = await response.json();
       // Handle the search results as needed
+      
       Alert.alert('Search Results', JSON.stringify(data)); // Example of handling results
     } catch (error) {
       setError(error.message);
