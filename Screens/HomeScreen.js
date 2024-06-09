@@ -50,8 +50,8 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.container}>
         <Text style={styles.title}>TODAY</Text>
         <Statistics 
-        eaten={5}
-        goal={calorieGoal}/>
+        eaten={120}
+        userGoal={calorieGoal}/>
         <TextInput
           style={styles.input}
           onChangeText={handleSearchChange}

@@ -3,22 +3,25 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Themes } from '../App/Theme';
 import Indicator from './Indicator';
 
-const Statistics = ({eaten, goal}) => {
+const Statistics = ({eaten, userGoal}) => {
+  const progress = userGoal > 0 ? eaten / userGoal * 100 : 0; // Fraction between 0 and 1
   return (
     <View style={styles.container}>
 
         <Text style={styles.text}>Statistics</Text>
         <View style={styles.statistics}>
           <View style={styles.sides}>         
-            <Text style={Themes.titles}>Eaten {eaten}</Text>
+            <Text style={Themes.titles}>Eaten</Text>
+            <Text style={Themes.titles}>{eaten} </Text>
           </View>
           <Indicator 
           size={100}
           strokeWidth={10}
-          progress={goal - eaten}
+          progress={progress}
           color="#3b5998"/>
           <View style={styles.sides}>  
-            <Text style={Themes.titles}>Goal {goal}</Text>
+            <Text style={Themes.titles}>Goal </Text>
+            <Text style={Themes.titles}>{userGoal} </Text>
           </View>
 
         </View>
