@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { addFoodToLog as addFoodToLogDB, db, fetchTodayCalories } from '../Database';
 
 export default function SearchResults({ route, navigation }) {
     const { searchQuery } = route.params;
@@ -9,6 +10,9 @@ export default function SearchResults({ route, navigation }) {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [selectedFood, setSelectedFood] = useState(null);
+    const [servings, setServings] = useState(1);
+    const [todayCalories, setTodayCalories] = useState(0);
 
     const fetchResults = async (pageNum) => {
         if (!searchQuery.trim()) return;
@@ -47,6 +51,7 @@ export default function SearchResults({ route, navigation }) {
 
     useEffect(() => {
         fetchResults(page);
+        fetchTodayCalories(setTodayCalories);
     }, [page]);
 
     const loadMoreResults = () => {
@@ -61,11 +66,21 @@ export default function SearchResults({ route, navigation }) {
         fetchResults(1);
     };
 
+    const addFoodToLog = () => {
+        addFoodToLogDB(selectedFood.description, selectedFood.calories, servings, (caloriesToAdd) => {
+            setTodayCalories(prevCalories => prevCalories + caloriesToAdd);
+        });
+        setSelectedFood(null);
+        setServings(1);
+    };
+
     const renderItem = ({ item }) => (
-        <View style={styles.item}>
-            <Text style={styles.itemText}>{item.description}</Text>
-            <Text style={styles.itemText}>Calories: {item.calories}</Text>
-        </View>
+        <TouchableOpacity onPress={() => setSelectedFood(item)}>
+            <View style={styles.item}>
+                <Text style={styles.itemText}>{item.description}</Text>
+                <Text style={styles.itemText}>Calories: {item.calories}</Text>
+            </View>
+        </TouchableOpacity>
     );
 
     return (
@@ -84,6 +99,20 @@ export default function SearchResults({ route, navigation }) {
                     onRefresh={handleRefresh}
                 />
             )}
+            {selectedFood && (
+                <View style={styles.foodDetail}>
+                    <Text style={styles.foodDetailText}>{selectedFood.description}</Text>
+                    <View style={styles.servingsControl}>
+                        <Button title="-" onPress={() => setServings(Math.max(1, servings - 1))} />
+                        <Text>{servings}</Text>
+                        <Button title="+" onPress={() => setServings(servings + 1)} />
+                    </View>
+                    <Button title="Add to Log" onPress={addFoodToLog} />
+                </View>
+            )}
+            <View style={styles.todayCalories}>
+                <Text style={styles.todayCaloriesText}>Today's Calories: {todayCalories}</Text>
+            </View>
         </View>
     );
 }
@@ -106,5 +135,46 @@ const styles = StyleSheet.create({
     },
     itemText: {
         fontSize: 16,
+    },
+    foodDetail: {
+        position: 'absolute',
+        bottom: 100,
+        left: 20,
+        right: 20,
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    foodDetailText: {
+        fontSize: 18,
+        marginBottom: 10,
+    },
+    servingsControl: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    todayCalories: {
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        right: 20,
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    todayCaloriesText: {
+        fontSize: 18,
     },
 });

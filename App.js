@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import NavigationStack from "./App/NavigationContainer";
 import { loadFonts } from './App/Theme';
-import { initDB } from './Database';
+import { initDB, resetDB } from './Database';
 
 SplashScreen.preventAutoHideAsync();
 
