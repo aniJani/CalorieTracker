@@ -82,10 +82,10 @@ const fetchTodayCalories = (callback) => {
     const today = new Date().toISOString().split('T')[0];
     db.transaction(tx => {
         tx.executeSql(
-            'SELECT totalCalories FROM Today WHERE date = ?',
+            'SELECT SUM(calories) as totalCalories FROM logs WHERE dateOfEntry = ?',
             [today],
             (_, { rows }) => {
-                if (rows.length > 0) {
+                if (rows.length > 0 && rows.item(0).totalCalories !== null) {
                     callback(rows.item(0).totalCalories);
                 } else {
                     callback(0);

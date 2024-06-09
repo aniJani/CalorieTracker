@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, Button, FlatList, Modal, StyleSheet, Text, Te
 import { Themes } from '../App/Theme';
 import Statistics from '../Components/Statistics';
 import LogList from '../Components/TodayList';
-import { fetchCalorieGoal, setCalorieGoal } from '../Database';
+import { fetchCalorieGoal, fetchTodayCalories, setCalorieGoal } from '../Database';
 
 export default function HomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,6 +11,7 @@ export default function HomeScreen({ navigation }) {
   const [error, setError] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [calorieGoal, setCalorieGoalState] = useState('');
+  const [eatenCalories, setEatenCalories] = useState(0);
 
   useEffect(() => {
     fetchCalorieGoal((goal) => {
@@ -20,6 +21,8 @@ export default function HomeScreen({ navigation }) {
         setCalorieGoalState(goal);
       }
     });
+
+    fetchTodayCalories(setEatenCalories);
   }, []);
 
   const handleSearchChange = (query) => {
@@ -49,9 +52,9 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.pageContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>TODAY</Text>
-        <Statistics 
-        eaten={120}
-        userGoal={calorieGoal}/>
+        <Statistics
+          eaten={eatenCalories}
+          userGoal={calorieGoal} />
         <TextInput
           style={styles.input}
           onChangeText={handleSearchChange}
