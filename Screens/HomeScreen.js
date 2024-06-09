@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Themes } from '../App/Theme';
-import LogList from '../Components/LogList';
 import Statistics from '../Components/Statistics';
 import LogList from '../Components/TodayList';
 import { fetchCalorieGoal, setCalorieGoal } from '../Database';
@@ -50,7 +49,9 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.pageContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>TODAY</Text>
-        <Statistics />
+        <Statistics 
+        eaten={5}
+        goal={calorieGoal}/>
         <TextInput
           style={styles.input}
           onChangeText={handleSearchChange}

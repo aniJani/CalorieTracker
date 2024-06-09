@@ -3,24 +3,22 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Themes } from '../App/Theme';
 import Indicator from './Indicator';
 
-const Statistics = () => {
+const Statistics = ({eaten, goal}) => {
   return (
     <View style={styles.container}>
 
         <Text style={styles.text}>Statistics</Text>
         <View style={styles.statistics}>
           <View style={styles.sides}>         
-            <Text style={Themes.titles}>Eaten</Text>
-            <Text>230</Text>
+            <Text style={Themes.titles}>Eaten {eaten}</Text>
           </View>
           <Indicator 
           size={100}
           strokeWidth={10}
-          progress={10}
+          progress={goal - eaten}
           color="#3b5998"/>
           <View style={styles.sides}>  
-            <Text style={Themes.titles}>Goal</Text>
-            <Text>1230</Text>
+            <Text style={Themes.titles}>Goal {goal}</Text>
           </View>
 
         </View>

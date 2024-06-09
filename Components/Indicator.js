@@ -6,6 +6,7 @@ const Indicator = ({ size, strokeWidth, progress, color }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
+  const numericProgress = isNaN(progress) ? 0 : parseFloat(progress);
 
   return (
     <View style={styles.container}>
