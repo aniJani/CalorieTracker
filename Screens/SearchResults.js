@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { addFoodToLog as addFoodToLogDB, db, fetchTodayCalories } from '../Database';
 import { Themes } from '../App/Theme';
+import Statistics from '../Components/Statistics';
 
 export default function SearchResults({ route, navigation }) {
     const { searchQuery } = route.params;
@@ -85,7 +86,15 @@ export default function SearchResults({ route, navigation }) {
     );
 
     return (
-        <View style={styles.container}>
+        <View style={styles.pageContainer}>
+
+            <View style={styles.resultsContainer}>
+                <Text style={styles.title}>TODAY</Text>
+                <Statistics />
+                <Text style={styles.input}>
+                    Search Results for: {searchQuery}
+                </Text>
+
             {isLoading && !isRefreshing && <ActivityIndicator size="large" color="#0000ff" />}
             {error && <Text style={styles.errorText}>{error}</Text>}
             {!isLoading && !error && results.length > 0 && (
@@ -115,21 +124,42 @@ export default function SearchResults({ route, navigation }) {
                 <Text style={styles.todayCaloriesText}>Today's Calories: {todayCalories}</Text>
             </View>
         </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    pageContainer: {
+        flex:1,
+        backgroundColor: "white",
+      },
+    resultsContainer: {
         flex: 1,
+        margin:20,
+        marginTop:30,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
     },
+
+    title: {
+        ...Themes.heading,
+        marginVertical: 30,
+    
+    },
+    input: {
+        ...Themes.regular,
+        height: 40,
+        width: '95%',
+        margin: 10,
+        //borderWidth: 1,
+        padding: 10,
+      },
     errorText: {
         color: 'red',
         marginTop: 10,
     },
     item: {
+        marginHorizontal: 10,
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
