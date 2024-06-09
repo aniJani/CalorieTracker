@@ -1,9 +1,10 @@
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import NavigationStack from "./App/NavigationContainer"
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import NavigationStack from "./App/NavigationContainer";
 import { loadFonts } from './App/Theme';
-import * as SplashScreen from 'expo-splash-screen';
+import { initDB } from './Database';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -11,6 +12,7 @@ export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
+    initDB();
     const loadApp = async () => {
       await loadFonts();
       setFontsLoaded(true);
