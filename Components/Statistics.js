@@ -18,7 +18,7 @@ const Statistics = ({eaten, userGoal}) => {
           size={100}
           strokeWidth={10}
           progress={progress}
-          color="#3b5998"/>
+          color="black"/>
           <View style={styles.sides}>  
             <Text style={Themes.titles}>Goal </Text>
             <Text style={Themes.titles}>{userGoal} </Text>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { fetchTodayLogItems } from '../Database';
+import { Themes } from '../App/Theme';
 
 export default function LogList() {
   const [data, setData] = useState([]);
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     height: "auto",
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
 
   },
   item: {
@@ -45,7 +46,8 @@ const styles = StyleSheet.create({
 
   },
   itemText: {
-    fontSize: 16,
+    ...Themes.regular,
+    fontSize: 20,
   },
   list: {
     width: '100%',

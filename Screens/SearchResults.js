@@ -106,17 +106,17 @@ export default function SearchResults({ route, navigation }) {
                 )}
                 {selectedFood && (
                     <View style={styles.foodDetail}>
-                        <Text style={styles.foodDetailText}>{selectedFood.description}</Text>
+                        <Text style={styles.input}>{selectedFood.description}</Text>
                         <View style={styles.servingsControl}>
-                            <Button title="-" onPress={() => setServings(Math.max(1, servings - 1))} />
+                            <Button title="-" onPress={() => setServings(Math.max(1, servings - 1))} color="black"/>
                             <Text>{servings}</Text>
-                            <Button title="+" onPress={() => setServings(servings + 1)} />
+                            <Button title="+" onPress={() => setServings(servings + 1) } color="black" />
                         </View>
-                        <Button title="Add to Log" onPress={addFoodToLog} />
+                        <Button title="Add to Log" onPress={addFoodToLog} color="black"/>
                     </View>
                 )}
                 <View style={styles.todayCalories}>
-                    <Text style={styles.todayCaloriesText}>Today's Calories: {todayCalories}</Text>
+                    <Text style={styles.itemText}>Today's Calorie: {todayCalories}</Text>
                 </View>
             </View>
         </View>
@@ -162,24 +162,6 @@ const styles = StyleSheet.create({
     itemText: {
         ...Themes.regular,
     },
-    foodDetail: {
-        position: 'absolute',
-        bottom: 100,
-        left: 20,
-        right: 20,
-        backgroundColor: '#fff',
-        padding: 20,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
-    },
-    foodDetailText: {
-        fontSize: 18,
-        marginBottom: 10,
-    },
     servingsControl: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -193,7 +175,6 @@ const styles = StyleSheet.create({
         right: 20,
         backgroundColor: '#fff',
         padding: 20,
-        borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
@@ -201,7 +182,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     todayCaloriesText: {
-        fontSize: 18,
+        ...Themes.regular,
     },
     foodDetail: {
         position: 'absolute',
@@ -220,28 +201,5 @@ const styles = StyleSheet.create({
     foodDetailText: {
         fontSize: 18,
         marginBottom: 10,
-    },
-    servingsControl: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-    },
-    todayCalories: {
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        right: 20,
-        backgroundColor: '#fff',
-        padding: 20,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
-    },
-    todayCaloriesText: {
-        fontSize: 18,
-    },
+    }
 });
