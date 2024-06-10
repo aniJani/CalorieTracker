@@ -128,6 +128,49 @@ const fetchTodayLogItems = (callback) => {
     });
 };
 
+const deleteTodayLogs = (callback) => {
+    const today = new Date().toISOString().split('T')[0];
+    db.transaction(tx => {
+        tx.executeSql(
+            'DELETE FROM logs WHERE dateOfEntry = ?',
+            [today],
+            () => {
+                console.log('Today\'s logs deleted successfully');
+                callback && callback();
+            },
+            (_, error) => console.log('Error deleting today\'s logs', error)
+        );
+    });
+};
+
+const deleteAllLogs = (callback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'DELETE FROM logs',
+            [],
+            () => {
+                console.log('All logs deleted successfully');
+                callback && callback();
+            },
+            (_, error) => console.log('Error deleting all logs', error)
+        );
+    });
+};
+
+const deleteAllFoods = (callback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'DELETE FROM foods',
+            [],
+            () => {
+                console.log('All foods deleted successfully');
+                callback && callback();
+            },
+            (_, error) => console.log('Error deleting all foods', error)
+        );
+    });
+};
+
 const resetDB = () => {
     db.transaction(tx => {
         tx.executeSql('DROP TABLE IF EXISTS logs;', [],
@@ -145,5 +188,5 @@ const resetDB = () => {
     }, null, initDB); // Reinitialize the database after dropping tables
 };
 
-export { addFoodToLog, db, fetchCalorieGoal, fetchTodayCalories, fetchTodayLogItems, initDB, resetDB, setCalorieGoal };
+export { addFoodToLog, db, deleteAllFoods, deleteAllLogs, deleteTodayLogs, fetchCalorieGoal, fetchTodayCalories, fetchTodayLogItems, initDB, resetDB, setCalorieGoal };
 
