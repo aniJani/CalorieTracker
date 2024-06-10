@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Themes } from '../App/Theme';
 import Statistics from '../Components/Statistics';
@@ -12,8 +13,9 @@ export default function HomeScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [calorieGoal, setCalorieGoalState] = useState('');
   const [eatenCalories, setEatenCalories] = useState(0);
+  const [reload, setReload] = useState(false);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     fetchCalorieGoal((goal) => {
       if (goal === null) {
         setIsModalVisible(true);
@@ -23,7 +25,18 @@ export default function HomeScreen({ navigation }) {
     });
 
     fetchTodayCalories(setEatenCalories);
+    setReload((prev) => !prev); // Toggle the reload state
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
@@ -34,7 +47,7 @@ export default function HomeScreen({ navigation }) {
     setIsLoading(true);
     setError(null);
     setIsLoading(false);
-    navigation.navigate('SearchResults', { searchQuery: searchQuery })
+    navigation.navigate('SearchResults', { searchQuery: searchQuery });
   };
 
   const handleSetCalorieGoal = () => {
@@ -45,6 +58,7 @@ export default function HomeScreen({ navigation }) {
     }
     setCalorieGoal(goal, () => {
       setIsModalVisible(false);
+      setReload((prev) => !prev); // Trigger reload after setting the goal
     });
   };
 
@@ -66,7 +80,7 @@ export default function HomeScreen({ navigation }) {
         />
         {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
         {error && <Text style={styles.errorText}>{error}</Text>}
-        <LogList />
+        <LogList reload={reload} />
       </View>
 
       <Modal
@@ -97,7 +111,6 @@ const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
     backgroundColor: "white",
-
   },
   container: {
     flex: 1,
@@ -138,4 +151,3 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-

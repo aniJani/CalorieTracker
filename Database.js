@@ -6,11 +6,11 @@ const initDB = () => {
     db.transaction(tx => {
         tx.executeSql(
             `CREATE TABLE IF NOT EXISTS logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        foodName TEXT,
-        calories INTEGER,
-        dateOfEntry DATE
-      );`,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                foodName TEXT,
+                calories INTEGER,
+                dateOfEntry DATE
+            );`,
             [],
             () => console.log('logs table created successfully'),
             (_, error) => console.log('Error creating logs table', error)
@@ -18,24 +18,13 @@ const initDB = () => {
 
         tx.executeSql(
             `CREATE TABLE IF NOT EXISTS foods (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        foodName TEXT UNIQUE,
-        calories INTEGER
-      );`,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                foodName TEXT UNIQUE,
+                calories INTEGER
+            );`,
             [],
             () => console.log('foods table created successfully'),
             (_, error) => console.log('Error creating foods table', error)
-        );
-
-        tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS Today (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        totalCalories INTEGER,
-        date DATE
-      );`,
-            [],
-            () => console.log('Today table created successfully'),
-            (_, error) => console.log('Error creating Today table', error)
         );
 
         tx.executeSql(
@@ -101,18 +90,22 @@ const addFoodToLog = (foodDescription, calories, servings, callback) => {
     const caloriesToAdd = calories * servings;
 
     db.transaction(tx => {
+        // Ensure the food is logged in the foods table first
         tx.executeSql(
-            'INSERT INTO logs (foodName, calories, dateOfEntry) VALUES (?, ?, ?)',
-            [foodDescription, caloriesToAdd, today],
+            'INSERT OR IGNORE INTO foods (foodName, calories) VALUES (?, ?)',
+            [foodDescription, calories],
             () => {
+                // Then insert into logs
                 tx.executeSql(
-                    'INSERT OR REPLACE INTO Today (date, totalCalories) VALUES (?, COALESCE((SELECT totalCalories FROM Today WHERE date = ?), 0) + ?)',
-                    [today, today, caloriesToAdd],
-                    () => callback(caloriesToAdd),
-                    (_, error) => console.log('Error updating today\'s calories', error)
+                    'INSERT INTO logs (foodName, calories, dateOfEntry) VALUES (?, ?, ?)',
+                    [foodDescription, caloriesToAdd, today],
+                    () => {
+                        callback(caloriesToAdd);
+                    },
+                    (_, error) => console.log('Error logging food', error)
                 );
             },
-            (_, error) => console.log('Error logging food', error)
+            (_, error) => console.log('Error inserting food into foods table', error)
         );
     });
 };
@@ -145,9 +138,9 @@ const resetDB = () => {
             () => console.log('foods table dropped successfully'),
             (_, error) => console.log('Error dropping foods table', error)
         );
-        tx.executeSql('DROP TABLE IF EXISTS Today;', [],
-            () => console.log('Today table dropped successfully'),
-            (_, error) => console.log('Error dropping Today table', error)
+        tx.executeSql('DROP TABLE IF EXISTS CalorieGoal;', [],
+            () => console.log('CalorieGoal table dropped successfully'),
+            (_, error) => console.log('Error dropping CalorieGoal table', error)
         );
     }, null, initDB); // Reinitialize the database after dropping tables
 };

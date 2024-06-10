@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { fetchTodayLogItems } from '../Database';
 import { Themes } from '../App/Theme';
+import { fetchTodayLogItems } from '../Database';
 
-export default function LogList() {
+export default function LogList({ reload }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     fetchTodayLogItems(setData);
-  }, []);
+  }, [reload]);
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
@@ -37,13 +37,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-
   },
   item: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-
   },
   itemText: {
     ...Themes.regular,
