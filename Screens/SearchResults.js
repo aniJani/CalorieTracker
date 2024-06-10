@@ -89,11 +89,6 @@ export default function SearchResults({ route, navigation }) {
         <View style={styles.pageContainer}>
 
             <View style={styles.resultsContainer}>
-                <Text style={styles.title}>TODAY</Text>
-                <Statistics />
-                <Text style={styles.input}>
-                    Search Results for: {searchQuery}
-                </Text>
 
                 {isLoading && !isRefreshing && <ActivityIndicator size="large" color="#0000ff" />}
                 {error && <Text style={styles.errorText}>{error}</Text>}

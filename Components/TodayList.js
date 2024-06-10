@@ -31,15 +31,18 @@ export default function LogList() {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
-    flex: 1,
+    width: "90%",
+    height: "auto",
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+
   },
   item: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+
   },
   itemText: {
     fontSize: 16,

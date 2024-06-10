@@ -97,10 +97,11 @@ const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
     backgroundColor: "white",
+
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     margin: 20
   },
