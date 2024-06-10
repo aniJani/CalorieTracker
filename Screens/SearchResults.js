@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View, Image, ImageBackground } from 'react-native';
 import { Themes } from '../App/Theme';
 import { addFoodToLog as addFoodToLogDB, db, fetchTodayCalories, fetchTodayLogItems } from '../Database';
 
@@ -116,7 +116,10 @@ export default function SearchResults({ route, navigation }) {
 
     return (
         <View style={styles.pageContainer}>
-            <View style={styles.resultsContainer}>
+            <ImageBackground source={require('../assets/icons/search-06.png')} style={styles.resultsContainer} imageStyle={styles.imageStyle}>
+
+            
+            <View >
                 {isLoading && !isRefreshing && <ActivityIndicator size="large" color="#0000ff" />}
                 {error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -150,20 +153,32 @@ export default function SearchResults({ route, navigation }) {
                 )}
 
                 {selectedFood && (
-                    <View style={styles.foodDetail}>
+                    <ImageBackground source={require('../assets/icons/serving-04.png')} style={styles.foodDetail} imageStyle={styles.imageStyle}>
+                    <View >
                         <Text style={styles.input}>{selectedFood.description || selectedFood.foodName}</Text>
                         <View style={styles.servingsControl}>
-                            <Button title="-" onPress={() => setServings(Math.max(1, servings - 1))} color="black" />
-                            <Text>{servings}</Text>
-                            <Button title="+" onPress={() => setServings(servings + 1)} color="black" />
+                            <TouchableOpacity onPress={() => setServings(Math.max(1, servings - 1))}>
+                            <Image source={require('../assets/icons/buttons-03.png')}/>
+                            </TouchableOpacity>   
+                            <Text style={Themes.titles}>{servings}</Text>
+                            <TouchableOpacity onPress={() => setServings(Math.max(1, servings + 1))}>
+                            <Image source={require('../assets/icons/buttons-01.png')}/>
+                            </TouchableOpacity>
                         </View>
-                        <Button title="Add to Log" onPress={addFoodToLog} color="black" />
+                        <TouchableOpacity onPress={addFoodToLog}>
+                            <Image source={require('../assets/icons/buttons-02.6.png')} style={styles.buttonImage}/>
+                        </TouchableOpacity>
                     </View>
+                    </ImageBackground>
                 )}
-                <View style={styles.todayCalories}>
+                <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.todayCalories} imageStyle={styles.imageStyle}>
+                <View >
                     <Text style={styles.itemText}>Today's Calorie: {todayCalories}</Text>
                 </View>
+                </ImageBackground>
             </View>
+            </ImageBackground>
+            
         </View>
     );
 }
@@ -179,6 +194,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         justifyContent: 'center',
         alignItems: 'center',
+        padding:10,
     },
     sectionTitle: {
         ...Themes.heading,
@@ -215,14 +231,17 @@ const styles = StyleSheet.create({
         bottom: 20,
         left: 20,
         right: 20,
-        backgroundColor: '#fff',
         padding: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
+        
     },
+    imageStyle: {
+        resizeMode: 'contain'
+    },
+    buttonImage: {
+        width: "auto",  // Set your desired width
+        height: "60%", // Set your desired height
+        resizeMode: 'contain',
+      },
     todayCaloriesText: {
         ...Themes.regular,
     },
@@ -231,14 +250,8 @@ const styles = StyleSheet.create({
         bottom: 100,
         left: 20,
         right: 20,
-        backgroundColor: '#fff',
         padding: 20,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
+
     },
     foodDetailText: {
         fontSize: 18,

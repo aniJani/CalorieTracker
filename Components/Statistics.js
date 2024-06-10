@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { Themes } from '../App/Theme';
 import Indicator from './Indicator';
 
@@ -7,7 +7,7 @@ const Statistics = ({eaten, userGoal}) => {
   const progress = userGoal > 0 ? eaten / userGoal * 100 : 0; // Fraction between 0 and 1
   return (
     <View style={styles.container}>
-
+      <ImageBackground source={require('../assets/icons/serving-04.png')} style={styles.todayCalories} imageStyle={styles.imageStyle}>
         <Text style={styles.text}>Statistics</Text>
         <View style={styles.statistics}>
           <View style={styles.sides}>         
@@ -25,7 +25,7 @@ const Statistics = ({eaten, userGoal}) => {
           </View>
 
         </View>
-
+        </ImageBackground>
     </View>
   );
 };
@@ -33,7 +33,7 @@ const Statistics = ({eaten, userGoal}) => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
-    padding: 10,
+    //padding: 10,
     width: "90%",
     position: "fixed",
     justifyContent: 'center',
@@ -46,11 +46,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: 'space-between',
     width: "100%",
-    paddingHorizontal: 20, // Adjust as needed for padding
+    padding: 20, // Adjust as needed for padding
+    margin: 10,
   },
+  imageStyle: {
+    resizeMode: "stretch"
+},
   text: {
     ...Themes.subHeading,
     textAlign: 'center',
+    marginTop: 10
   },
   sides: {
     padding: 10,

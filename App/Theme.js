@@ -13,7 +13,7 @@ export const Themes = {
     heading :{
         fontFamily: 'bold',
         
-        fontSize: 35,
+        fontSize: 30,
     },
 
     subHeading: {
