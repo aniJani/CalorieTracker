@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Themes } from '../App/Theme';
-import Statistics from '../Components/Statistics';
 import { addFoodToLog as addFoodToLogDB, db, fetchTodayCalories, fetchTodayLogItems } from '../Database';
 
 export default function SearchResults({ route, navigation }) {
     const { searchQuery } = route.params;
-    const [results, setResults] = useState([]);
+    const [localResults, setLocalResults] = useState([]);
+    const [apiResults, setApiResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [error, setError] = useState(null);
@@ -15,8 +15,25 @@ export default function SearchResults({ route, navigation }) {
     const [selectedFood, setSelectedFood] = useState(null);
     const [servings, setServings] = useState(1);
     const [todayCalories, setTodayCalories] = useState(0);
+    const [connectionError, setConnectionError] = useState(false);
 
-    const fetchResults = async (pageNum) => {
+    const fetchLocalResults = async () => {
+        db.transaction(tx => {
+            tx.executeSql(
+                'SELECT * FROM foods WHERE foodName LIKE ?',
+                [`%${searchQuery}%`],
+                (_, { rows }) => {
+                    setLocalResults(rows._array);
+                },
+                (_, error) => {
+                    console.log('Error fetching local results', error);
+                    setLocalResults([]);
+                }
+            );
+        });
+    };
+
+    const fetchApiResults = async (pageNum) => {
         if (!searchQuery.trim()) return;
         if (pageNum === 1) {
             setIsLoading(true);
@@ -24,6 +41,7 @@ export default function SearchResults({ route, navigation }) {
             setIsFetchingMore(true);
         }
         setError(null);
+        setConnectionError(false);
         try {
             const apiUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&pageSize=10&pageNumber=${pageNum}&api_key=ChBEanL4ik3vuOZlPG3hdsgIqImCBwOQ9pELsrV5`;
             const response = await fetch(apiUrl);
@@ -36,14 +54,14 @@ export default function SearchResults({ route, navigation }) {
             }));
 
             if (pageNum === 1) {
-                setResults(newResults);
+                setApiResults(newResults);
             } else {
-                setResults(prevResults => [...prevResults, ...newResults]);
+                setApiResults(prevResults => [...prevResults, ...newResults]);
             }
 
         } catch (error) {
             setError(error.message);
-            Alert.alert('Error', error.message);
+            setConnectionError(true);
         } finally {
             setIsLoading(false);
             setIsFetchingMore(false);
@@ -52,7 +70,8 @@ export default function SearchResults({ route, navigation }) {
     };
 
     useEffect(() => {
-        fetchResults(page);
+        fetchLocalResults();
+        fetchApiResults(page);
         fetchTodayCalories(setTodayCalories);
     }, [page]);
 
@@ -65,7 +84,8 @@ export default function SearchResults({ route, navigation }) {
     const handleRefresh = () => {
         setIsRefreshing(true);
         setPage(1);
-        fetchResults(1);
+        fetchLocalResults();
+        fetchApiResults(1);
     };
 
     const addFoodToLog = () => {
@@ -76,7 +96,16 @@ export default function SearchResults({ route, navigation }) {
         setServings(1);
     };
 
-    const renderItem = ({ item }) => (
+    const renderLocalItem = ({ item }) => (
+        <TouchableOpacity onPress={() => setSelectedFood(item)}>
+            <View style={styles.item}>
+                <Text style={styles.itemText}>{item.foodName}</Text>
+                <Text style={styles.itemText}>Calories: {item.calories}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
+    const renderApiItem = ({ item }) => (
         <TouchableOpacity onPress={() => setSelectedFood(item)}>
             <View style={styles.item}>
                 <Text style={styles.itemText}>{item.description}</Text>
@@ -87,32 +116,48 @@ export default function SearchResults({ route, navigation }) {
 
     return (
         <View style={styles.pageContainer}>
-
             <View style={styles.resultsContainer}>
-
                 {isLoading && !isRefreshing && <ActivityIndicator size="large" color="#0000ff" />}
                 {error && <Text style={styles.errorText}>{error}</Text>}
-                {!isLoading && !error && results.length > 0 && (
+
+                <Text style={styles.sectionTitle}>Previous Foods</Text>
+                {localResults.length > 0 ? (
                     <FlatList
-                        data={results}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.fdcId.toString()}
-                        onEndReached={loadMoreResults}
-                        onEndReachedThreshold={0.5}
-                        ListFooterComponent={isFetchingMore && <ActivityIndicator size="large" color="#0000ff" />}
-                        refreshing={isRefreshing}
-                        onRefresh={handleRefresh}
+                        data={localResults}
+                        renderItem={renderLocalItem}
+                        keyExtractor={(item) => item.id.toString()}
                     />
+                ) : (
+                    <Text>No previous foods found.</Text>
                 )}
+
+                <Text style={styles.sectionTitle}>API Search Results</Text>
+                {connectionError ? (
+                    <Text>Connection failure. Unable to fetch API search results.</Text>
+                ) : (
+                    !isLoading && !error && apiResults.length > 0 && (
+                        <FlatList
+                            data={apiResults}
+                            renderItem={renderApiItem}
+                            keyExtractor={(item) => item.fdcId.toString()}
+                            onEndReached={loadMoreResults}
+                            onEndReachedThreshold={0.5}
+                            ListFooterComponent={isFetchingMore && <ActivityIndicator size="large" color="#0000ff" />}
+                            refreshing={isRefreshing}
+                            onRefresh={handleRefresh}
+                        />
+                    )
+                )}
+
                 {selectedFood && (
                     <View style={styles.foodDetail}>
-                        <Text style={styles.input}>{selectedFood.description}</Text>
+                        <Text style={styles.input}>{selectedFood.description || selectedFood.foodName}</Text>
                         <View style={styles.servingsControl}>
-                            <Button title="-" onPress={() => setServings(Math.max(1, servings - 1))} color="black"/>
+                            <Button title="-" onPress={() => setServings(Math.max(1, servings - 1))} color="black" />
                             <Text>{servings}</Text>
-                            <Button title="+" onPress={() => setServings(servings + 1) } color="black" />
+                            <Button title="+" onPress={() => setServings(servings + 1)} color="black" />
                         </View>
-                        <Button title="Add to Log" onPress={addFoodToLog} color="black"/>
+                        <Button title="Add to Log" onPress={addFoodToLog} color="black" />
                     </View>
                 )}
                 <View style={styles.todayCalories}>
@@ -135,18 +180,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-
-    title: {
+    sectionTitle: {
         ...Themes.heading,
-        marginVertical: 30,
-
+        marginVertical: 10,
     },
     input: {
         ...Themes.regular,
         height: 40,
         width: '95%',
         margin: 10,
-        //borderWidth: 1,
         padding: 10,
     },
     errorText: {
