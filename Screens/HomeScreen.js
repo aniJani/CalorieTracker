@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, FlatList, ImageBackground, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Themes } from '../App/Theme';
 import Statistics from '../Components/Statistics';
 import LogList from '../Components/TodayList';
@@ -71,8 +71,9 @@ export default function HomeScreen({ navigation }) {
             eaten={eatenCalories}
             userGoal={calorieGoal} />
         </TouchableOpacity>
+        <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.search} imageStyle={styles.imageStyle}>
         <TextInput
-          style={styles.input}
+
           onChangeText={handleSearchChange}
           value={searchQuery}
           placeholder="Search here..."
@@ -80,6 +81,7 @@ export default function HomeScreen({ navigation }) {
           returnKeyType="search"
           onSubmitEditing={executeSearch}
         />
+        </ImageBackground>
         {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
         {error && <Text style={styles.errorText}>{error}</Text>}
         <LogList reload={reload} />
@@ -123,6 +125,16 @@ const styles = StyleSheet.create({
   title: {
     ...Themes.heading,
     marginVertical: 30,
+  },
+  imageStyle: {
+    resizeMode: 'contain',
+  
+  },
+  search: {
+    alignItems: 'center',
+    height: "auto",
+    width: '105%',
+    padding: 10,
   },
   input: {
     height: 40,

@@ -164,7 +164,9 @@ export default function SearchResults({ route, navigation }) {
                             <TouchableOpacity onPress={() => setServings(Math.max(1, servings + 1))}>
                             <Image source={require('../assets/icons/buttons-01.png')}/>
                             </TouchableOpacity>
-                        </View>
+                        </View>    
+                    </View>
+                    <View style={styles.addFoodToLog}>
                         <TouchableOpacity onPress={addFoodToLog}>
                             <Image source={require('../assets/icons/buttons-02.6.png')} style={styles.buttonImage}/>
                         </TouchableOpacity>
@@ -200,11 +202,13 @@ const styles = StyleSheet.create({
         ...Themes.heading,
         marginVertical: 10,
     },
+    addFoodToLog:{
+        margin:10,
+    },
     input: {
         ...Themes.regular,
         height: 40,
         width: '95%',
-        margin: 10,
         padding: 10,
     },
     errorText: {
@@ -224,7 +228,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 10,
     },
     todayCalories: {
         position: 'absolute',
@@ -232,14 +235,15 @@ const styles = StyleSheet.create({
         left: 20,
         right: 20,
         padding: 20,
-        
     },
     imageStyle: {
         resizeMode: 'contain'
     },
     buttonImage: {
-        width: "auto",  // Set your desired width
-        height: "60%", // Set your desired height
+        alignSelf: "center",
+        width: "110%",  // Set your desired width
+        margin: -10,
+        //height: 45, // Set your desired height
         resizeMode: 'contain',
       },
     todayCaloriesText: {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { Themes } from '../App/Theme';
 import { deleteAllFoods, deleteAllLogs, deleteTodayLogs, setCalorieGoal } from '../Database';
 
@@ -37,18 +37,50 @@ export default function Settings() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.resultsContainer}>
+                
             <Text style={styles.title}>Settings</Text>
-            <Button title="Delete Today's Logs" onPress={handleDeleteTodayLogs} color="black" />
-            <Button title="Delete All Logs" onPress={handleDeleteAllLogs} color="black" />
-            <Button title="Delete All Foods" onPress={handleDeleteAllFoods} color="black" />
-            <TextInput
-                style={styles.input}
-                onChangeText={setNewCalorieGoal}
-                value={newCalorieGoal}
-                placeholder="Enter new calorie goal"
-                keyboardType="numeric"
-            />
-            <Button title="Set New Calorie Goal" onPress={handleSetCalorieGoal} color="black" />
+            
+            
+                <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.search} imageStyle={styles.imageStyle}>
+                    <TextInput
+                        onChangeText={setNewCalorieGoal}
+                        value={newCalorieGoal}
+                        placeholder="Enter new calorie goal"
+                        keyboardType="numeric"
+                    />
+                </ImageBackground>
+
+                <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.button} imageStyle={styles.imageStyle}>
+                    <TouchableOpacity onPress={handleSetCalorieGoal} >  
+                        <Text style={Themes.regular}>Set New Calorie Goal</Text>
+                    </TouchableOpacity>
+                </ImageBackground>
+
+                <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.button} imageStyle={styles.imageStyle}>
+                    <TouchableOpacity onPress={handleDeleteTodayLogs} >  
+                        <Text style={Themes.regular}>Delete Today's Logs</Text>
+                    </TouchableOpacity>
+                </ImageBackground>
+
+                <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.button} imageStyle={styles.imageStyle}>
+                    <TouchableOpacity onPress={handleDeleteAllLogs} >  
+                        <Text style={Themes.regular}>Delete All Logs</Text>
+                    </TouchableOpacity>
+                </ImageBackground>
+
+                <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.button} imageStyle={styles.imageStyle}>
+                    <TouchableOpacity onPress={handleDeleteAllFoods} >  
+                        <Text style={Themes.regular}>Delete All Foods</Text>
+                    </TouchableOpacity>
+                </ImageBackground>
+
+            </View>
+            
+
+
+
+
         </View>
     );
 }
@@ -56,21 +88,38 @@ export default function Settings() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "white",
+ 
+    },
+    resultsContainer: {
+        height: "100%",
+        margin: 20,
+        marginTop: 30,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        padding: 20,
+        padding:10,
+        position: "static",
     },
     title: {
         ...Themes.heading,
         marginBottom: 20,
     },
-    input: {
-        height: 40,
-        width: '80%',
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 20,
-        paddingHorizontal: 10,
+    search: {
+        alignItems: 'center',
+        justifyContent: "center",
+        height: 50,
+        width: '100%',
+        alignSelf: "center"
     },
+
+    imageStyle: {
+        resizeMode: 'contain',
+    },
+    button: {
+        width: '100%',
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        margin: 10,
+    }
 });
