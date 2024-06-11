@@ -116,6 +116,11 @@ export default function SearchResults({ route, navigation }) {
 
     return (
         <View style={styles.pageContainer}>
+            {isLoading && !isRefreshing ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : (
             <ImageBackground source={require('../assets/icons/search-06.png')} style={styles.resultsContainer} imageStyle={styles.imageStyle}>
 
             
@@ -180,7 +185,7 @@ export default function SearchResults({ route, navigation }) {
                 </ImageBackground>
             </View>
             </ImageBackground>
-            
+            )}
         </View>
     );
 }
