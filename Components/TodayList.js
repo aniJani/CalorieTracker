@@ -4,7 +4,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Themes } from '../App/Theme';
 import { deleteLogById, fetchTodayLogItems } from '../Database';
 
-export default function LogList({ reload }) {
+export default function LogList({ reload, onDelete }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -14,6 +14,7 @@ export default function LogList({ reload }) {
   const handleDelete = (id) => {
     deleteLogById(id, () => {
       fetchTodayLogItems(setData); // Refresh the list after deletion
+      onDelete(); // Trigger the reload of statistics
     });
   };
 

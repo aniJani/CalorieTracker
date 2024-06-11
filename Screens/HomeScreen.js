@@ -72,19 +72,18 @@ export default function HomeScreen({ navigation }) {
             userGoal={calorieGoal} />
         </TouchableOpacity>
         <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.search} imageStyle={styles.imageStyle}>
-        <TextInput
-
-          onChangeText={handleSearchChange}
-          value={searchQuery}
-          placeholder="Search here..."
-          keyboardType="default"
-          returnKeyType="search"
-          onSubmitEditing={executeSearch}
-        />
+          <TextInput
+            onChangeText={handleSearchChange}
+            value={searchQuery}
+            placeholder="Search here..."
+            keyboardType="default"
+            returnKeyType="search"
+            onSubmitEditing={executeSearch}
+          />
         </ImageBackground>
         {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
         {error && <Text style={styles.errorText}>{error}</Text>}
-        <LogList reload={reload} />
+        <LogList reload={reload} onDelete={loadData} />
       </View>
 
       <Modal
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     resizeMode: 'contain',
-  
+
   },
   search: {
     alignItems: 'center',
