@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Themes } from '../App/Theme';
 import { deleteLogById, fetchTodayLogItems } from '../Database';
@@ -21,7 +21,7 @@ export default function LogList({ reload, onDelete }) {
   const renderRightActions = (id) => {
     return (
       <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(id)}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
+         <Image source={require('../assets/icons/delete-07.png')}/>
       </TouchableOpacity>
     );
   };
@@ -72,14 +72,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   deleteButton: {
-    backgroundColor: 'red',
+    
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,
     height: '100%',
   },
-  deleteButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
+
 });
