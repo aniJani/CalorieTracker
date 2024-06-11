@@ -78,7 +78,6 @@ export const addFoodToLog = async (foodDescription, calories, servings, callback
     }
 };
 
-
 export const fetchTodayLogItems = async (callback) => {
     const today = new Date().toISOString().split('T')[0];
     try {
@@ -156,5 +155,16 @@ export const fetchHistory = async (callback) => {
         callback(result);
     } catch (error) {
         console.error('Error fetching history data', error);
+    }
+};
+
+export const fetchLocalResults = async (searchQuery, callback) => {
+    try {
+        const db = await dbPromise;
+        const result = await db.getAllAsync('SELECT * FROM foods WHERE foodName LIKE ?', [`%${searchQuery}%`]);
+        callback(result);
+    } catch (error) {
+        console.error('Error fetching local results', error);
+        callback([]);
     }
 };

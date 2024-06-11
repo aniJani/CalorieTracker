@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View, Image, ImageBackground } from 'react-native';
+import { ActivityIndicator, FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Themes } from '../App/Theme';
-import { addFoodToLog as addFoodToLogDB, db, fetchTodayCalories, fetchTodayLogItems } from '../Database';
+import { addFoodToLog as addFoodToLogDB, fetchLocalResults, fetchTodayCalories, fetchTodayLogItems } from '../Database';
 
 export default function SearchResults({ route, navigation }) {
     const { searchQuery } = route.params;
@@ -17,20 +17,8 @@ export default function SearchResults({ route, navigation }) {
     const [todayCalories, setTodayCalories] = useState(0);
     const [connectionError, setConnectionError] = useState(false);
 
-    const fetchLocalResults = async () => {
-        db.transaction(tx => {
-            tx.executeSql(
-                'SELECT * FROM foods WHERE foodName LIKE ?',
-                [`%${searchQuery}%`],
-                (_, { rows }) => {
-                    setLocalResults(rows._array);
-                },
-                (_, error) => {
-                    console.log('Error fetching local results', error);
-                    setLocalResults([]);
-                }
-            );
-        });
+    const loadLocalResults = async () => {
+        await fetchLocalResults(searchQuery, setLocalResults);
     };
 
     const fetchApiResults = async (pageNum) => {
@@ -70,7 +58,7 @@ export default function SearchResults({ route, navigation }) {
     };
 
     useEffect(() => {
-        fetchLocalResults();
+        loadLocalResults();
         fetchApiResults(page);
         fetchTodayCalories(setTodayCalories);
     }, [page]);
@@ -84,7 +72,7 @@ export default function SearchResults({ route, navigation }) {
     const handleRefresh = () => {
         setIsRefreshing(true);
         setPage(1);
-        fetchLocalResults();
+        loadLocalResults();
         fetchApiResults(1);
     };
 
@@ -121,70 +109,65 @@ export default function SearchResults({ route, navigation }) {
             ) : error ? (
                 <Text style={styles.errorText}>{error}</Text>
             ) : (
-            <ImageBackground source={require('../assets/icons/search-06.png')} style={styles.resultsContainer} imageStyle={styles.imageStyle}>
-
-            
-            <View >
-                {isLoading && !isRefreshing && <ActivityIndicator size="large" color="#0000ff" />}
-                {error && <Text style={styles.errorText}>{error}</Text>}
-
-                <Text style={styles.sectionTitle}>Previous Foods</Text>
-                {localResults.length > 0 ? (
-                    <FlatList
-                        data={localResults}
-                        renderItem={renderLocalItem}
-                        keyExtractor={(item) => item.id.toString()}
-                    />
-                ) : (
-                    <Text>No previous foods found.</Text>
-                )}
-
-                <Text style={styles.sectionTitle}>API Search Results</Text>
-                {connectionError ? (
-                    <Text>Connection failure. Unable to fetch API search results.</Text>
-                ) : (
-                    !isLoading && !error && apiResults.length > 0 && (
-                        <FlatList
-                            data={apiResults}
-                            renderItem={renderApiItem}
-                            keyExtractor={(item) => item.fdcId.toString()}
-                            onEndReached={loadMoreResults}
-                            onEndReachedThreshold={0.5}
-                            ListFooterComponent={isFetchingMore && <ActivityIndicator size="large" color="#0000ff" />}
-                            refreshing={isRefreshing}
-                            onRefresh={handleRefresh}
-                        />
-                    )
-                )}
-
-                {selectedFood && (
-                    <ImageBackground source={require('../assets/icons/serving-04.png')} style={styles.foodDetail} imageStyle={styles.imageStyle}>
-                    <View >
-                        <Text style={styles.input}>{selectedFood.description || selectedFood.foodName}</Text>
-                        <View style={styles.servingsControl}>
-                            <TouchableOpacity onPress={() => setServings(Math.max(1, servings - 1))}>
-                            <Image source={require('../assets/icons/buttons-03.png')}/>
-                            </TouchableOpacity>   
-                            <Text style={Themes.titles}>{servings}</Text>
-                            <TouchableOpacity onPress={() => setServings(Math.max(1, servings + 1))}>
-                            <Image source={require('../assets/icons/buttons-01.png')}/>
-                            </TouchableOpacity>
-                        </View>    
+                <ImageBackground source={require('../assets/icons/search-06.png')} style={styles.resultsContainer} imageStyle={styles.imageStyle}>
+                    <View>
+                        {isLoading && !isRefreshing && <ActivityIndicator size="large" color="#0000ff" />}
+                        {error && <Text style={styles.errorText}>{error}</Text>}
+                        <Text style={styles.sectionTitle}>Previous Foods</Text>
+                        {localResults.length > 0 ? (
+                            <FlatList
+                                data={localResults}
+                                renderItem={renderLocalItem}
+                                keyExtractor={(item) => item.id.toString()}
+                            />
+                        ) : (
+                            <Text>No previous foods found.</Text>
+                        )}
+                        <Text style={styles.sectionTitle}>API Search Results</Text>
+                        {connectionError ? (
+                            <Text>Connection failure. Unable to fetch API search results.</Text>
+                        ) : (
+                            !isLoading && !error && apiResults.length > 0 && (
+                                <FlatList
+                                    data={apiResults}
+                                    renderItem={renderApiItem}
+                                    keyExtractor={(item) => item.fdcId.toString()}
+                                    onEndReached={loadMoreResults}
+                                    onEndReachedThreshold={0.5}
+                                    ListFooterComponent={isFetchingMore && <ActivityIndicator size="large" color="#0000ff" />}
+                                    refreshing={isRefreshing}
+                                    onRefresh={handleRefresh}
+                                />
+                            )
+                        )}
+                        {selectedFood && (
+                            <ImageBackground source={require('../assets/icons/serving-04.png')} style={styles.foodDetail} imageStyle={styles.imageStyle}>
+                                <View>
+                                    <Text style={styles.input}>{selectedFood.description || selectedFood.foodName}</Text>
+                                    <View style={styles.servingsControl}>
+                                        <TouchableOpacity onPress={() => setServings(Math.max(1, servings - 1))}>
+                                            <Image source={require('../assets/icons/buttons-03.png')} />
+                                        </TouchableOpacity>
+                                        <Text style={Themes.titles}>{servings}</Text>
+                                        <TouchableOpacity onPress={() => setServings(Math.max(1, servings + 1))}>
+                                            <Image source={require('../assets/icons/buttons-01.png')} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={styles.addFoodToLog}>
+                                    <TouchableOpacity onPress={addFoodToLog}>
+                                        <Image source={require('../assets/icons/buttons-02.6.png')} style={styles.buttonImage} />
+                                    </TouchableOpacity>
+                                </View>
+                            </ImageBackground>
+                        )}
+                        <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.todayCalories} imageStyle={styles.imageStyle}>
+                            <View>
+                                <Text style={styles.itemText}>Today's Calorie: {todayCalories}</Text>
+                            </View>
+                        </ImageBackground>
                     </View>
-                    <View style={styles.addFoodToLog}>
-                        <TouchableOpacity onPress={addFoodToLog}>
-                            <Image source={require('../assets/icons/buttons-02.6.png')} style={styles.buttonImage}/>
-                        </TouchableOpacity>
-                    </View>
-                    </ImageBackground>
-                )}
-                <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.todayCalories} imageStyle={styles.imageStyle}>
-                <View >
-                    <Text style={styles.itemText}>Today's Calorie: {todayCalories}</Text>
-                </View>
                 </ImageBackground>
-            </View>
-            </ImageBackground>
             )}
         </View>
     );
@@ -201,14 +184,14 @@ const styles = StyleSheet.create({
         marginTop: 30,
         justifyContent: 'center',
         alignItems: 'center',
-        padding:10,
+        padding: 10,
     },
     sectionTitle: {
         ...Themes.heading,
         marginVertical: 10,
     },
-    addFoodToLog:{
-        margin:10,
+    addFoodToLog: {
+        margin: 10,
     },
     input: {
         ...Themes.regular,
@@ -250,7 +233,7 @@ const styles = StyleSheet.create({
         margin: -10,
         //height: 45, // Set your desired height
         resizeMode: 'contain',
-      },
+    },
     todayCaloriesText: {
         ...Themes.regular,
     },
