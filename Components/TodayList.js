@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Themes } from '../App/Theme';
-import { fetchTodayLogItems } from '../Database';
+import { deleteLogById, fetchTodayLogItems } from '../Database';
 
 export default function LogList({ reload }) {
   const [data, setData] = useState([]);
@@ -10,11 +11,30 @@ export default function LogList({ reload }) {
     fetchTodayLogItems(setData);
   }, [reload]);
 
+  const handleDelete = (id) => {
+    deleteLogById(id, () => {
+      fetchTodayLogItems(setData); // Refresh the list after deletion
+    });
+  };
+
+  const renderRightActions = (id) => {
+    return (
+      <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(id)}>
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <Text style={styles.itemText}>{item.foodName}</Text>
-      <Text style={styles.itemText}>Calories: {item.calories}</Text>
-    </View>
+    <Swipeable
+      renderRightActions={() => renderRightActions(item.id)}
+      onSwipeableClose={() => { }}
+    >
+      <View style={styles.item}>
+        <Text style={styles.itemText}>{item.foodName}</Text>
+        <Text style={styles.itemText}>Calories: {item.calories}</Text>
+      </View>
+    </Swipeable>
   );
 
   return (
@@ -49,5 +69,16 @@ const styles = StyleSheet.create({
   },
   list: {
     width: '100%',
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    height: '100%',
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

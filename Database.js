@@ -171,6 +171,20 @@ const deleteAllFoods = (callback) => {
     });
 };
 
+const deleteLogById = (logId, callback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'DELETE FROM logs WHERE id = ?',
+            [logId],
+            () => {
+                console.log(`Log with id ${logId} deleted successfully`);
+                callback && callback();
+            },
+            (_, error) => console.log(`Error deleting log with id ${logId}`, error)
+        );
+    });
+};
+
 const resetDB = () => {
     db.transaction(tx => {
         tx.executeSql('DROP TABLE IF EXISTS logs;', [],
@@ -188,5 +202,18 @@ const resetDB = () => {
     }, null, initDB); // Reinitialize the database after dropping tables
 };
 
-export { addFoodToLog, db, deleteAllFoods, deleteAllLogs, deleteTodayLogs, fetchCalorieGoal, fetchTodayCalories, fetchTodayLogItems, initDB, resetDB, setCalorieGoal };
+export {
+    addFoodToLog,
+    db,
+    deleteAllFoods,
+    deleteAllLogs,
+    deleteLogById,
+    deleteTodayLogs,
+    fetchCalorieGoal,
+    fetchTodayCalories,
+    fetchTodayLogItems,
+    initDB,
+    resetDB,
+    setCalorieGoal
+};
 
