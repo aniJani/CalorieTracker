@@ -13,14 +13,14 @@ export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
-    initDB();
-    const loadApp = async () => {
+    const initializeApp = async () => {
+      await initDB();
       await loadFonts();
       setFontsLoaded(true);
       SplashScreen.hideAsync();
     };
 
-    loadApp();
+    initializeApp();
   }, []);
 
   if (!fontsLoaded) {
