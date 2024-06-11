@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { Themes } from '../App/Theme';
 import { fetchHistory } from '../Database';
@@ -12,9 +12,13 @@ export default function History({ navigation }) {
     }, []);
 
     const renderHistoryItem = ({ item }) => (
-        <View style={styles.historyBox}>
-            <Text style={styles.historyText}>{item.date}</Text>
-            <Text style={styles.historyText}>{item.totalCalories} kcal</Text>
+
+        <View>
+            <ImageBackground source={require("../assets/icons/history-08.png")} style={styles.historyBox} imageStyle={styles.imageStyle}>
+                <Text style={styles.historyText}>{item.date}</Text>
+                <Text style={styles.historyText}>{item.totalCalories} kcal</Text>
+            </ImageBackground>
+
         </View>
     );
 
@@ -59,21 +63,25 @@ const styles = StyleSheet.create({
         marginVertical: 30,
     },
     historyContainer: {
+
         justifyContent: 'center',
         alignItems: 'center',
     },
+    imageStyle: {
+        resizeMode: "contain",
+    },
+
     historyBox: {
-        width: 60,
-        height: 60,
-        margin: 5,
+
+        height: 70,
+        width: 120,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f0f0f0',
-        borderRadius: 5,
-        padding: 5,
+        //backgroundColor: '#f0f0f0',
+
     },
     historyText: {
-        fontSize: 12,
+        ...Themes.regular,
         textAlign: 'center',
     },
 });
