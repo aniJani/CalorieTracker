@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Button, FlatList, ImageBackground, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { Themes } from '../App/Theme';
 import Statistics from '../Components/Statistics';
 import LogList from '../Components/TodayList';
@@ -62,51 +63,66 @@ export default function HomeScreen({ navigation }) {
     });
   };
 
-  return (
-    <View style={styles.pageContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>TODAY</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-          <Statistics
-            eaten={eatenCalories}
-            userGoal={calorieGoal} />
-        </TouchableOpacity>
-        <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.search} imageStyle={styles.imageStyle}>
-          <TextInput
-            onChangeText={handleSearchChange}
-            value={searchQuery}
-            placeholder="Search here..."
-            keyboardType="default"
-            returnKeyType="search"
-            onSubmitEditing={executeSearch}
-          />
-        </ImageBackground>
-        {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
-        {error && <Text style={styles.errorText}>{error}</Text>}
-        <LogList reload={reload} onDelete={loadData} />
-      </View>
+  const onGestureEvent = (event) => {
+    if (event.nativeEvent.translationX < -100) {
+      navigation.navigate('History');
+    }
+  };
 
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Set Your Calorie Goal</Text>
+  return (
+    <PanGestureHandler
+      onGestureEvent={onGestureEvent}
+      onHandlerStateChange={({ nativeEvent }) => {
+        if (nativeEvent.state === State.END) {
+          onGestureEvent({ nativeEvent });
+        }
+      }}
+    >
+      <View style={styles.pageContainer}>
+        <View style={styles.container}>
+          <Text style={styles.title}>TODAY</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+            <Statistics
+              eaten={eatenCalories}
+              userGoal={calorieGoal} />
+          </TouchableOpacity>
+          <ImageBackground source={require('../assets/icons/todays-06.png')} style={styles.search} imageStyle={styles.imageStyle}>
             <TextInput
-              style={styles.input}
-              onChangeText={setCalorieGoalState}
-              value={calorieGoal}
-              placeholder="Enter calorie goal"
-              keyboardType="numeric"
+              onChangeText={handleSearchChange}
+              value={searchQuery}
+              placeholder="Search here..."
+              keyboardType="default"
+              returnKeyType="search"
+              onSubmitEditing={executeSearch}
             />
-            <Button title="Set Goal" onPress={handleSetCalorieGoal} />
-          </View>
+          </ImageBackground>
+          {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
+          {error && <Text style={styles.errorText}>{error}</Text>}
+          <LogList reload={reload} onDelete={loadData} />
         </View>
-      </Modal>
-    </View>
+
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Set Your Calorie Goal</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setCalorieGoalState}
+                value={calorieGoal}
+                placeholder="Enter calorie goal"
+                keyboardType="numeric"
+              />
+              <Button title="Set Goal" onPress={handleSetCalorieGoal} />
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </PanGestureHandler>
   );
 }
 

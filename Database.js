@@ -202,6 +202,24 @@ const resetDB = () => {
     }, null, initDB); // Reinitialize the database after dropping tables
 };
 
+const fetchHistory = (callback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'SELECT dateOfEntry as date, SUM(calories) as totalCalories FROM logs GROUP BY dateOfEntry ORDER BY dateOfEntry DESC',
+            [],
+            (_, { rows }) => {
+                let historyItems = [];
+                for (let i = 0; i < rows.length; i++) {
+                    historyItems.push(rows.item(i));
+                }
+                callback(historyItems);
+            },
+            (_, error) => console.log('Error fetching history data', error)
+        );
+    });
+};
+
+
 export {
     addFoodToLog,
     db,
@@ -209,8 +227,7 @@ export {
     deleteAllLogs,
     deleteLogById,
     deleteTodayLogs,
-    fetchCalorieGoal,
-    fetchTodayCalories,
+    fetchCalorieGoal, fetchHistory, fetchTodayCalories,
     fetchTodayLogItems,
     initDB,
     resetDB,
